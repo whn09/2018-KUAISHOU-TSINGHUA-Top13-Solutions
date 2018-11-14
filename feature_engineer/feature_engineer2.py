@@ -9,10 +9,12 @@ from sklearn.preprocessing import LabelEncoder
 import time
 from scipy import stats
 
-register_log = pd.read_csv('/mnt/datasets/fusai/user_register_log.txt',sep='\t',header=None,dtype={0:np.uint32,1:np.uint8,2:np.uint16,3:np.uint16}).rename(columns={0:'user_id',1:'day',2:'register_type',3:'device_type'})
-action_log = pd.read_csv('/mnt/datasets/fusai/user_activity_log.txt',sep='\t',header=None,dtype={0:np.uint32,1:np.uint8,2:np.uint8,3:np.uint32,4:np.uint32,5:np.uint8}).rename(columns={0:'user_id',1:'day',2:'page',3:'video_id',4:'author_id',5:'action_type'})
-app_log = pd.read_csv('/mnt/datasets/fusai/app_launch_log.txt',sep='\t',header=None,dtype={0:np.uint32,1:np.uint8}).rename(columns={0:'user_id',1:'day'})
-video_log = pd.read_csv('/mnt/datasets/fusai/video_create_log.txt',sep='\t',header=None,dtype={0:np.uint32,1:np.uint8}).rename(columns={0:'user_id',1:'day'})
+read_path = '../../dataset/log_preprocess/'
+
+register_log = pd.read_csv(read_path+'user_register_log.txt',sep='\t',header=None,dtype={0:np.uint32,1:np.uint8,2:np.uint16,3:np.uint16}).rename(columns={0:'user_id',1:'day',2:'register_type',3:'device_type'})
+action_log = pd.read_csv(read_path+'user_activity_log.txt',sep='\t',header=None,dtype={0:np.uint32,1:np.uint8,2:np.uint8,3:np.uint32,4:np.uint32,5:np.uint8}).rename(columns={0:'user_id',1:'day',2:'page',3:'video_id',4:'author_id',5:'action_type'})
+app_log = pd.read_csv(read_path+'app_launch_log.txt',sep='\t',header=None,dtype={0:np.uint32,1:np.uint8}).rename(columns={0:'user_id',1:'day'})
+video_log = pd.read_csv(read_path+'video_create_log.txt',sep='\t',header=None,dtype={0:np.uint32,1:np.uint8}).rename(columns={0:'user_id',1:'day'})
 register_log = register_log.sort_values(by=['user_id','day'],ascending=True)
 action_log = action_log.sort_values(by=['user_id','day'],ascending=True)
 app_log = app_log.sort_values(by=['user_id','day'],ascending=True)
@@ -393,7 +395,6 @@ def data_prepare(read_path=None):
 
     return register_log,action_log,app_log,video_log
 
-read_path = '/mnt/datasets/fusai/'
 register_log,action_log,app_log,video_log = data_prepare(read_path)
 train_set = []
 for i in range(17,25):
@@ -414,7 +415,7 @@ online_data = pd.merge(online_data,register_log[['user_id','use_reg_people','wee
                                             'week_rt','week_dt','use_dev_people','week_rt_use_people','week_dt_use_people',
                                             'rt_dt_use_people']],on=['user_id'],how='left')
 
-write_path = '/home/kesci/'
+write_path = read_path
 train_data.to_csv(write_path+'train_data.csv',index=False)
 valid_data.to_csv(write_path+'valid_data.csv',index=False)
 online_data.to_csv(write_path+'online_data.csv',index=False)
